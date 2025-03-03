@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto11    # Use Corretto JDK 11 (adjust to your Java version)
+  build:
+    commands:
+      - mvn clean package  # Compile the project and package it as a JAR
+artifacts:
+  files:
+    - target/*.jar        # Specify the output JAR file(s) to upload as artifacts
