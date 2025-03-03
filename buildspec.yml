@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto11    # Use Corretto JDK 11 (adjust to your Java version)
+      java: corretto21    # Use Corretto JDK 21 (adjust to your Java version)
   build:
     commands:
       - mvn clean package  # Compile the project and package it as a JAR
