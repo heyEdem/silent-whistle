@@ -1,137 +1,590 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Chatroom</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Modern Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: #dadbd3;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .chat-container {
-            max-width: 600px;
-            margin: 50px auto;
+            width: 100%;
+            max-width: 1000px;
+            height: 90vh;
             background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
+
         .chat-header {
-            background-color: #007bff;
-            color: #fff;
+            display: flex;
+            align-items: center;
             padding: 15px;
-            text-align: center;
+            background-color: #128C7E;
+            color: white;
+            position: relative;
+            z-index: 10;
         }
-        .chat-body {
-            padding: 20px;
-            height: 400px;
-            overflow-y: scroll;
+
+        .chat-header h3 {
+            font-weight: 500;
+            font-size: 1.2rem;
+            margin-left: 10px;
         }
-        .chat-footer {
-            padding: 10px;
-            background-color: #f1f1f1;
+
+        .chat-header-icons {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
         }
-        .message {
-            margin-bottom: 10px;
+
+        .chat-header-icons i {
+            font-size: 1.2rem;
+            cursor: pointer;
         }
-        .message .sender {
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #075E54;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
         }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23128c7e' fill-opacity='0.05'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            position: relative;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 65%;
+            position: relative;
+            clear: both;
+        }
+
+        .message.received {
+            float: left;
+            background-color: white;
+            border-radius: 10px 10px 10px 0;
+            padding: 12px 15px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.sent {
+            float: right;
+            background-color: #DCF8C6;
+            border-radius: 10px 10px 0 10px;
+            padding: 12px 15px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .message .sender {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            color: #128C7E;
+        }
+
+        .message .content {
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
         .message .timestamp {
-            font-size: 0.8em;
-            color: #777;
+            font-size: 0.7rem;
+            color: #999;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .chat-footer {
+            padding: 12px;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+        }
+
+        .message-input-container {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 30px;
+            padding: 8px 15px;
+            flex: 1;
+        }
+
+        #messageInput {
+            border: none;
+            outline: none;
+            padding: 5px;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .chat-icons {
+            display: flex;
+            gap: 12px;
+            margin-right: 10px;
+            color: #919191;
+        }
+
+        .chat-icons i {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .send-btn {
+            background-color: #128C7E;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #075E54;
+        }
+
+        /* Login Form Styling */
+        #usernameForm {
+            max-width: 400px;
+        }
+
+        #usernameForm .chat-body {
+            height: auto;
+            padding: 30px;
+        }
+
+        #usernameEntryForm {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #128C7E;
+        }
+
+        #usernameInput {
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        #usernameInput:focus {
+            border-color: #128C7E;
+        }
+
+        .join-btn {
+            background-color: #128C7E;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .join-btn:hover {
+            background-color: #075E54;
+        }
+
+        .login-icon {
+            font-size: 3rem;
+            color: #128C7E;
+            margin: 0 auto 20px;
+            display: block;
+            text-align: center;
+        }
+
+        #clearMessages {
+            position: absolute;
+            right: 15px;
+            bottom: 70px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            color: #128C7E;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                max-width: none;
+            }
+
+            .message {
+                max-width: 80%;
+            }
+
+            body {
+                padding: 0;
+                height: 100vh;
+            }
+
+            #usernameForm {
+                width: 90%;
+                max-width: none;
+            }
+        }
+
+        /* Message typing indicator */
+        .typing-indicator {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            display: inline-block;
+            position: relative;
+            animation: fadeIn 0.3s;
+            display: none;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #128C7E;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation: blink 1s infinite 0.3s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation: blink 1s infinite 0.5s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation: blink 1s infinite 0.7s;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 <div id="usernameForm" class="chat-container">
     <div class="chat-header">
-        <h3>Enter Your Name</h3>
+        <div class="chat-avatar">
+            <i class="fas fa-comment"></i>
+        </div>
+        <h3>Modern Chat</h3>
     </div>
     <div class="chat-body">
+        <i class="fas fa-user-circle login-icon"></i>
         <form id="usernameEntryForm">
             <div class="input-group">
-                <input type="text" id="usernameInput" class="form-control" placeholder="Enter your name...">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Join Chatroom</button>
-                </div>
+                <label for="usernameInput" class="form-label">Enter your name to join the chat</label>
+                <input type="text" id="usernameInput" placeholder="Your name..." autocomplete="off" required>
             </div>
+            <button type="submit" class="join-btn">
+                <i class="fas fa-sign-in-alt"></i> Join Chatroom
+            </button>
         </form>
     </div>
 </div>
 
 <div id="chatroom" class="chat-container" style="display: none;">
     <div class="chat-header">
-        <h3>Chatroom</h3>
+        <div class="chat-avatar" id="roomAvatar"></div>
+        <div>
+            <h3>Group Chat</h3>
+            <div id="activeUsers" style="font-size: 0.8rem; opacity: 0.8;">0 online</div>
+        </div>
+        <div class="chat-header-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-ellipsis-v"></i>
+        </div>
     </div>
     <div class="chat-body" id="chatBody">
         <!-- Messages will be appended here -->
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
+    <button id="clearMessages" title="Clear chat history">Clear messages</button>
     <div class="chat-footer">
-        <form id="chatForm">
-            <div class="input-group">
-                <input type="text" id="messageInput" class="form-control" placeholder="Type a message...">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Send</button>
-                </div>
+        <div class="message-input-container">
+            <div class="chat-icons">
+                <i class="far fa-smile"></i>
+                <i class="fas fa-paperclip"></i>
             </div>
-        </form>
+            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+        </div>
+        <button class="send-btn" id="sendButton" title="Send message">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script>
     var stompClient = null;
     var username = null;
+    var userColor = null;
+    var activeUsers = 0;
+    var typingTimer;
+    var isTyping = false;
+
+    // Generate a random color for the user
+    function getRandomColor() {
+        const colors = [
+            '#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#e91e63',
+            '#f1c40f', '#e67e22', '#e74c3c', '#34495e', '#16a085',
+            '#27ae60', '#2980b9', '#8e44ad', '#f39c12', '#d35400',
+            '#c0392b', '#7f8c8d'
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
 
     function connect() {
         var socket = new SockJS('/chatroom');
         stompClient = Stomp.over(socket);
+
+        // Disable console logs from Stomp
+        stompClient.debug = null;
+
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/messages', function (message) {
                 showMessage(JSON.parse(message.body));
             });
+
+            stompClient.subscribe('/topic/users', function (message) {
+                updateActiveUsers(JSON.parse(message.body).count);
+            });
+
+            stompClient.subscribe('/topic/typing', function (message) {
+                const data = JSON.parse(message.body);
+                showTypingIndicator(data.username, data.isTyping);
+            });
+
+            // Send a message that a new user has joined
+            sendMessage(null, username + " has joined the chat", true);
+
+            // Request user count update
+            stompClient.send("/app/users", {}, JSON.stringify({'action': 'join'}));
         });
     }
 
-    function sendMessage(event) {
-        event.preventDefault();
-        var messageContent = $('#messageInput').val();
-        var timestamp = new Date().toLocaleTimeString();
+    function sendMessage(event, customContent, isSystemMessage) {
+        if (event) event.preventDefault();
+
+        var messageContent = customContent || $('#messageInput').val().trim();
+        if (!messageContent) return;
+
+        var timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
         stompClient.send("/app/chat", {}, JSON.stringify({
             'sender': username,
             'content': messageContent,
-            'timestamp': timestamp
+            'timestamp': timestamp,
+            'color': userColor,
+            'isSystemMessage': isSystemMessage || false
         }));
+
         $('#messageInput').val('');
+
+        // Indicate that user stopped typing
+        sendTypingStatus(false);
+        isTyping = false;
     }
 
     function showMessage(message) {
-        var messageElement = `
-                   <div class="message">
-                       <div class="sender">${message.sender}</div>
-                       <div class="content">${message.content}</div>
-                       <div class="timestamp">${message.timestamp}</div>
-                   </div>
-               `;
+        // Don't add empty messages
+        if (!message.content) return;
+
+        let messageClass = message.isSystemMessage ? 'system' :
+            (message.sender === username ? 'sent' : 'received');
+
+        let senderElement = message.isSystemMessage ? '' :
+            `<div class="sender" style="color: ${message.color || '#128C7E'}">${message.sender}</div>`;
+
+        let messageElement = `
+            <div class="message ${messageClass}" ${message.isSystemMessage ? 'style="text-align: center; color: #888; font-style: italic; float: none; margin: 10px auto; background: none; box-shadow: none;"' : ''}>
+                ${senderElement}
+                <div class="content">${message.content}</div>
+                <div class="timestamp">${message.timestamp}</div>
+            </div>
+        `;
+
         $('#chatBody').append(messageElement);
-        $('#chatBody').scrollTop($('#chatBody')[0].scrollHeight);
+        scrollToBottom();
+
+        // Only show clear button if we have messages
+        $('#clearMessages').show();
+    }
+
+    function scrollToBottom() {
+        const chatBody = $('#chatBody');
+        chatBody.scrollTop(chatBody[0].scrollHeight);
+    }
+
+    function updateActiveUsers(count) {
+        activeUsers = count;
+        $('#activeUsers').text(activeUsers + (activeUsers === 1 ? ' online' : ' online'));
+    }
+
+    function sendTypingStatus(isTyping) {
+        stompClient.send("/app/typing", {}, JSON.stringify({
+            'username': username,
+            'isTyping': isTyping
+        }));
+    }
+
+    function showTypingIndicator(typingUser, isTyping) {
+        if (typingUser === username) return;
+
+        if (isTyping) {
+            $('#typingIndicator').show();
+            scrollToBottom();
+        } else {
+            $('#typingIndicator').hide();
+        }
+    }
+
+    // Get initials from username for avatar
+    function getInitials(name) {
+        return name.split(' ')
+            .map(word => word.charAt(0))
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
     }
 
     $(document).ready(function () {
+        // Username form submission
         $('#usernameEntryForm').on('submit', function (event) {
             event.preventDefault();
-            username = $('#usernameInput').val();
+            username = $('#usernameInput').val().trim();
             if (username) {
+                userColor = getRandomColor();
                 $('#usernameForm').hide();
                 $('#chatroom').show();
+
+                // Set room avatar
+                $('#roomAvatar').text(getInitials(username));
+
+                // Welcome message
+                setTimeout(function() {
+                    showMessage({
+                        sender: 'System',
+                        content: 'Welcome to the chatroom, ' + username + '!',
+                        timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        isSystemMessage: true
+                    });
+                }, 500);
+
                 connect();
             }
         });
 
-        $('#chatForm').on('submit', sendMessage);
+        // Send message through button or Enter key
+        $('#sendButton').on('click', function() {
+            sendMessage(null);
+        });
+
+        $('#messageInput').on('keypress', function(e) {
+            if (e.which === 13) {
+                sendMessage(null);
+            }
+        });
+
+        // Typing indicator
+        $('#messageInput').on('input', function() {
+            if (!isTyping) {
+                isTyping = true;
+                sendTypingStatus(true);
+            }
+
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                isTyping = false;
+                sendTypingStatus(false);
+            }, 1000);
+        });
+
+        // Clear messages
+        $('#clearMessages').on('click', function() {
+            $('#chatBody').html(`
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `);
+            $('#clearMessages').hide();
+        });
     });
 </script>
 </body>
