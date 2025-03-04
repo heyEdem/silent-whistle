@@ -6,10 +6,8 @@ phases:
   build:
     commands:
       - mvn clean package  # Compile the project and package it as a JAR
-      # Output a JSON file with your custom version label:
-      - echo '{"VersionLabel": "initial commit"}' > version.json
+    
 artifacts:
   files:
     - target/*.jar        # Specify the output JAR file(s) to upload as artifacts
-    - version.json
-  discard-paths: yes
+   
