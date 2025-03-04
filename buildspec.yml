@@ -9,10 +9,7 @@ phases:
     
 artifacts:
   files:
-<<<<<<< HEAD
     - target/SilentWhisperer.jar        # Specify the output JAR file(s) to upload as artifacts
   discard-paths: yes
-=======
-    - target/*.jar        # Specify the output JAR file(s) to upload as artifacts
-   
->>>>>>> f72a3d039e07367e120bc8eee3ef26e95c12a542
+
+
