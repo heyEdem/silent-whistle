@@ -28,15 +28,15 @@ jobs:
           cp target/*.jar artifact/
           zip -r springboot-app.zip artifact/
 
-      - name: Upload to AWS S3
-        uses: aws-actions/s3-sync@v2
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          bucket: ${{ secrets.BUCKET_NAME }}
-          region: ${{ secrets.REGION }}
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          source-dir: .
-          dest-dir: /
-
-      - name: Cleanup
-        run: rm -rf artifact springboot-app.zip
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+      - name: Create a ZIP file
+        run: |
+          zip -r my-app.zip ./  # Adjust the path if needed
+      - name: Upload ZIP to S3
+        run: |
+          aws s3 cp my-app.zip s3://${{ secrets.BUCKET_NAME }}/springboot-app.zip
