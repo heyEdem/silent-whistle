@@ -19,7 +19,7 @@ jobs:
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
     - name: Build, tag, and push image to Amazon ECR
       env:
-        ECR_REGISTRY: public.ecr.aws/r1b3l1w9/silentwhisper
+        ECR_REGISTRY: public.ecr.aws/r1b3l1w9
         ECR_REPOSITORY: silentwhisper
         IMAGE_TAG: Augustine_Akato_silentwhisper 
       run: |
