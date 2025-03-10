@@ -19,11 +19,11 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the compiled .jar file from the build stage
-COPY --from=build /app/target/SilentWhisperer-1.0-SNAPSHOT.jar SilentWhisperer-app.jar
+COPY --from=build /app/target/SilentWhisperer.jar SilentWhisperer.jar
 
 # Expose port 5000
 EXPOSE 5000
 
 # Run the application
-CMD ["java", "-jar", "SilentWhisperer-app.jar"]
+CMD ["java", "-jar", "SilentWhisperer.jar"]
 
