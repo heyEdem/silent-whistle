@@ -1,0 +1,42 @@
+name: Build and Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # Change if using a different branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build JAR file
+        run: mvn clean package -DskipTests
+
+      - name: Create ZIP archive
+        run: |
+          mkdir -p artifact
+          cp target/*.jar artifact/
+          zip -r springboot-app.zip artifact/
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+      - name: Create a ZIP file
+        run: |
+          zip -r my-app.zip ./  # Adjust the path if needed
+      - name: Upload ZIP to S3
+        run: |
+          aws s3 cp my-app.zip s3://${{ secrets.BUCKET_NAME }}/springboot-app.zip
