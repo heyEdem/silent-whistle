@@ -1,13 +1,29 @@
-FROM ubuntu:latest AS build
+ENTRYPOINT ["top", "-b"]
+# Stage 1: Build the application using Maven
+FROM maven:3.9.4-eclipse-temurin-21 as build
 
-RUN apt-get update
-RUN apt-get install -y openjdk-21-jdk maven
-COPY . .
+# Set the working directory in the container
+WORKDIR /app
 
+# Copy the Maven project files (pom.xml) and source code (src)
+COPY pom.xml .
+COPY src ./src
+
+# Build the application and skip tests
 RUN mvn clean package -DskipTests
 
-FROM openjdk:21-slim
+# Stage 2: Create a runtime image with a lightweight JRE
+FROM eclipse-temurin:21-jre
 
-COPY --from=build /target/SilentWhisperer-0.0.1-SNAPSHOT.jar app.jar
+# Set the working directory in the container
+WORKDIR /app
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copy the compiled .jar file from the build stage
+COPY --from=build /app/target/SilentWhisperer-1.0-SNAPSHOT.jar SilentWhisperer-app.jar
+
+# Expose port 5000
+EXPOSE 5000
+
+# Run the application
+CMD ["java", "-jar", "SilentWhisperer-app.jar"]
+
